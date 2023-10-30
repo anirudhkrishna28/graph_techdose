@@ -1,21 +1,28 @@
 class Solution:
     def maximumDetonation(self, bombs: List[List[int]]) -> int:
-        def dfs(node: int, visited: set = None) -> set:
-            if visited is None:
-                visited = {node}
+        
+        def dfs(index,visited):
 
-            for child in graph[node]:
-                if child not in visited:
-                    visited.add(child)
-                    dfs(child, visited)
+            x,y,r = bombs[index]
+            visited.add(index)
+            v = 0
+            for i in range(len(bombs)):
+                if (i == index) or (i in visited):
+                    continue
+                x1,y1,r1 = bombs[i]
+                d = ((x1-x)**2) + ((y1-y)**2)
+                if d <= r*r:
+                    v += dfs(i,visited)+1
 
-            return visited
+            return v
 
-        graph = defaultdict(set)
+        ans = 0
+        for i in range(len(bombs)):
+            visited = set()
+            ans = max(ans,dfs(i,visited)+1)
+        
+        return ans
 
-        for i, (x1, y1, rad) in enumerate(bombs):
-            for j, (x2, y2, _) in enumerate(bombs):
-                if (x1 - x2) ** 2 + (y1 - y2) ** 2 <= rad ** 2:
-                    graph[i].add(j)
+                
 
-        return max(len(dfs(i)) for i in range(len(bombs)))
+                
